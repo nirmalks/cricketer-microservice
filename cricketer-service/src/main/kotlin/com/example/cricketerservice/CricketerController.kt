@@ -1,5 +1,8 @@
 package com.example.cricketerservice
 
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,39 +16,37 @@ import java.util.function.Function
 class CricketerController(private val cricketerService: CricketerService,
                           private val cricketerRepository: CricketerRepository) {
     @GetMapping("/cricketers")
-    fun getAllCricketers(): Flux<Cricketer?>? {
-        return cricketerRepository.findAll()
+    @FlowPreview
+    fun getAllCricketers(): Flow<Cricketer?>? {
+        return cricketerService.getAllPlayers()
     }
 
     @GetMapping("/cricketers/{id}")
-    fun getCricketer(@PathVariable("id") id: String): Mono<ResponseEntity<Cricketer>> {
-        return cricketerRepository.findById(id)
-                .map(Function<Cricketer, ResponseEntity<Cricketer>> { body: Cricketer? -> ResponseEntity.ok(body!!) })
-                .defaultIfEmpty(ResponseEntity<Cricketer>(HttpStatus.NOT_FOUND))
+    suspend fun getCricketer(@PathVariable("id") id: String): ResponseEntity<Cricketer> {
+        val cricketer: Cricketer = cricketerService.findById(id) ?:
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        return ResponseEntity.ok(cricketer)
     }
 
     @PostMapping("/cricketers")
-    fun addCricketer(@RequestBody cricketer: Cricketer):
-            Mono<ResponseEntity<Cricketer>>? {
-        return cricketerRepository.save(cricketer).map {
-            ResponseEntity(it, HttpStatus.CREATED)
-        }
+    suspend fun addCricketer(@RequestBody cricketer: Cricketer): ResponseEntity<Cricketer> {
+        return ResponseEntity(cricketerService.save(cricketer),HttpStatus.CREATED)
     }
 
     @PutMapping("/cricketers/{id}")
-    fun updateCricketer(@PathVariable("id") id: String, @RequestBody cricketer: Cricketer): Mono<ResponseEntity<Cricketer>> {
-        return cricketerRepository.findById(id).flatMap(Function<Cricketer, Mono<out Cricketer?>> { currentCricketer: Cricketer ->
-            currentCricketer.copy(country = cricketer.country, name = cricketer.name,
-                    highestScore = cricketer.highestScore)
-            cricketerRepository.save<Cricketer?>(currentCricketer)
-        })
-                .map( { updatedCricketer: Cricketer? -> ResponseEntity(updatedCricketer, HttpStatus.OK) })
-                .defaultIfEmpty(ResponseEntity<Cricketer>(HttpStatus.NOT_FOUND))
+    suspend fun updateCricketer(@PathVariable("id") id: String, @RequestBody cricketer: Cricketer): ResponseEntity<Cricketer> {
+        val existingCricketer = cricketerService.findById(id) ?:
+                return ResponseEntity(HttpStatus.NOT_FOUND)
+        val newCricketer = cricketerService.save(existingCricketer.copy(country = cricketer.country, name = cricketer.name,
+                    highestScore = cricketer.highestScore))
+        return ResponseEntity(newCricketer, HttpStatus.OK)
     }
 
     @DeleteMapping("/cricketers/{id}")
-    fun deleteCricketer(@PathVariable("id") id: String): Mono<ResponseEntity<Void>> {
-        return cricketerRepository.deleteById(id).then(Mono.just(ResponseEntity<Void>(HttpStatus.OK)
-        ))
+    suspend fun deleteCricketer(@PathVariable("id") id: String): ResponseEntity<Void> {
+        if(cricketerService.findById(id) == null) {
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        }
+        return ResponseEntity(cricketerService.deleteById(id),HttpStatus.OK)
     }
 }
