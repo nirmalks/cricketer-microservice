@@ -9,7 +9,6 @@ import java.util.function.Function
 
 
 @RestController
-@RequestMapping("/api")
 class CricketerController(private val cricketerService: CricketerService,
                           private val cricketerRepository: CricketerRepository) {
     @GetMapping("/cricketers")
