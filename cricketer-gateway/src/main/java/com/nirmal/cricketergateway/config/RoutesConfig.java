@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class  LocalhostConfig {
+public class RoutesConfig {
     @Bean
-    public RouteLocator localhostRoutes(RouteLocatorBuilder builder) {
+    public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(r -> r.path("/cricketers*")
-                    .uri("http://localhost:8081")
+                        .uri("lb://cricketer-service")
                         .id("cricketer-service"))
                 .build();
     }
