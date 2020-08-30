@@ -11,8 +11,15 @@ public class RoutesConfig {
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(r -> r.path("/cricketers*")
+                        .filters(f -> f.circuitBreaker(c -> c.setName("cricketerFb")
+                            .setFallbackUri("forward:/cricketer-failover")
+                                .setRouteId("cricketer-failover")
+                        ))
                         .uri("lb://cricketer-service")
                         .id("cricketer-service"))
+                .route(r -> r.path("/cricketer-failover*")
+                        .uri("lb://cricketer-failover-service")
+                        .id("cricketer-failover-service"))
                 .build();
     }
 }

@@ -27,6 +27,7 @@
         <module>discovery-service</module>
         <module>cricketer-service</module>
         <module>cricketer-gateway</module>
+        <module>cricketer-failover-service</module>
     </modules>
     <build>
         <plugins>
