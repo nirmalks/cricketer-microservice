@@ -25,7 +25,7 @@ class CricketerServiceApplicationTests(
 
 	@Test
 	fun testAddCricketer() {
-		val cricketer = Cricketer("1", "s","in",12)
+		val cricketer = Cricketer("1", "s","in",12, "1")
 		webTestClient.post().uri("/api/cricketers")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.accept(MediaType.APPLICATION_JSON_UTF8)
@@ -40,7 +40,7 @@ class CricketerServiceApplicationTests(
 	}
 
     @Test
-    fun testGetAllCars() {
+    fun testGetAllCricketers() {
         webTestClient.get().uri("/api/cricketers")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .exchange()
@@ -50,13 +50,14 @@ class CricketerServiceApplicationTests(
     }
 
     @Test
-    fun testDeleteCar() {
+    fun testDeleteCricketer() {
         val cricketer = cricketerRepository.save(
                 Cricketer(
                 "someid",
                         "sachin",
                         "ind",
-                        150
+                        150,
+                        "1"
                 )
         ).block()
 

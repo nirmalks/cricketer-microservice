@@ -10,5 +10,6 @@ data class Cricketer (
     @Id val id:String,
     val name: String,
     val country: String,
-    val highestScore: Number
+    val highestScore: Number,
+    val teamId: String? = null
 )
