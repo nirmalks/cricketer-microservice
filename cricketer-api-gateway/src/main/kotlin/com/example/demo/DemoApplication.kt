@@ -15,37 +15,37 @@ import java.net.URI
 
 @EnableEurekaClient
 @SpringBootApplication
-class DemoApplication {
+class DemoApplication
 
     fun main(args: Array<String>) {
         runApplication<DemoApplication>(*args)
     }
-    @Bean
-    fun routeLocator(builder: RouteLocatorBuilder): RouteLocator {
-        return builder.routes()
-                .route (
-                        "cricketer-service"
-                ) { r -> r.path("/api/cricketers/**")
-                        .filters { filter ->
-                            filter.hystrix { config ->
-                                run {
-                                    config.fallbackUri =
-                                            URI("forward:/cricketers-fallback")
-                                }
-                            }
-                        }
-                        .uri("http://localhost:8081/")
-                }
-                .build()
-    }
+//    @Bean
+//    fun routeLocator(builder: RouteLocatorBuilder): RouteLocator {
+//        return builder.routes()
+//                .route (
+//                        "cricketer-service"
+//                ) { r -> r.path("/api/cricketers/**")
+//                        .filters { filter ->
+//                            filter.hystrix { config ->
+//                                run {
+//                                    config.fallbackUri =
+//                                            URI("forward:/cricketers-fallback")
+//                                }
+//                            }
+//                        }
+//                        .uri("http://localhost:8081/")
+//                }
+//                .build()
+//    }
 
 
-    @Bean
-    @LoadBalanced
-    fun loadBalancedWebClientBuilder():WebClient.Builder {
-        return WebClient.builder()
-    }
-}
+//    @Bean
+//    @LoadBalanced
+//    fun loadBalancedWebClientBuilder():WebClient.Builder {
+//        return WebClient.builder()
+//    }
+
 
 
 
