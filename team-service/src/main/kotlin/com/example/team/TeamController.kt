@@ -2,6 +2,8 @@ package com.example.team
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -9,6 +11,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 class TeamController(private val teamService: TeamService) {
+
+    var logger: Logger = LoggerFactory.getLogger(TeamController::class.java)
+
     @GetMapping("/teams")
     @FlowPreview
     fun getAllTeams(): Flow<Team?>? {
@@ -17,6 +22,7 @@ class TeamController(private val teamService: TeamService) {
 
     @GetMapping("/teams/{id}")
     suspend fun getTeam(@PathVariable("id") id: String): ResponseEntity<Team> {
+        logger.info("Inside get team", id)
         val team: Team = teamService.findById(id) ?:
         return ResponseEntity(HttpStatus.NOT_FOUND)
         return ResponseEntity.ok(team)
