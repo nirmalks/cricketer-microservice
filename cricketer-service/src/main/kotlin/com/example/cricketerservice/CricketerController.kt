@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
-class CricketerController(private val cricketerService: CricketerService) {
+class CricketerController(private val cricketerService: CricketerService ,
+                          private val commonService: CommonService) {
     @GetMapping("/cricketers")
     @FlowPreview
     fun getAllCricketers(): Flow<Cricketer?>? {
@@ -20,7 +21,7 @@ class CricketerController(private val cricketerService: CricketerService) {
         val cricketer: Cricketer = cricketerService.findById(id) ?:
             return ResponseEntity(HttpStatus.NOT_FOUND)
         val cricketerWithTeam = if (cricketer.teamId != null) {
-            val team = cricketerService.getTeamById(cricketer.teamId)
+            val team = commonService.getTeamById(cricketer.teamId)
             CricketerResponse.fromCricketerAndTeam(cricketer, team)
         } else CricketerResponse.fromCricketerAndTeam(cricketer, null)
         return ResponseEntity.ok(cricketerWithTeam)
