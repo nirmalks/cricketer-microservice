@@ -28,6 +28,7 @@
         <module>cricketer-service</module>
         <module>cricketer-api-gateway</module>
         <module>team-service</module>
+        <module>configserver</module>
     </modules>
     <build>
         <plugins>
